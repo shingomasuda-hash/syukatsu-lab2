@@ -130,18 +130,21 @@ export function ArticleIndexRow({
 }) {
   return (
     <Link href={`/knowhow/${article.slug}`} className="lab-index-row">
-      <b>{String(number).padStart(2, "0")}</b>
+      <b aria-hidden="true">{String(number).padStart(2, "0")}</b>
       <div>
-        <h3>{article.title}</h3>
+        <p className="lab-index-meta">
+          <span className="lab-index-cat">{article.category}</span>
+          <span>{formatDate(article.publishedAt)}</span>
+          <span>{article.readingTime} MIN READ</span>
+        </p>
+        <div className="lab-index-head">
+          <h3>{article.title}</h3>
+          <i className="lab-index-arrow">
+            <ArrowUpRight width={18} height={18} aria-hidden="true" />
+          </i>
+        </div>
         <p>{article.excerpt}</p>
       </div>
-      <span>
-        {article.category} · {formatDate(article.publishedAt)} ·{" "}
-        {article.readingTime}MIN
-        <i className="lab-index-arrow">
-          <ArrowUpRight width={16} height={16} aria-hidden="true" />
-        </i>
-      </span>
     </Link>
   );
 }

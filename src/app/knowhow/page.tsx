@@ -92,58 +92,50 @@ export default async function KnowhowPage({
         </section>
       )}
 
-      {/* ---- CATEGORY ---- */}
-      <section className="lab-section lab-ruled" style={{ paddingBottom: 0 }}>
-        <div className="lab-section-head">
+      {/* ---- INDEX：左に見出しとカテゴリ、右に記事行 ---- */}
+      <section className="lab-section lab-ruled">
+        <div className="lab-index-layout">
+          <div className="lab-index-aside">
+            <p className="lab-label">CONTENTS</p>
+            <div className="lab-result-count">
+              <strong>{String(list.length).padStart(2, "0")}</strong>
+              <span>{cat ? "IN CATEGORY" : "ARTICLES"}</span>
+            </div>
+
+            <nav className="lab-index-nav" aria-label="カテゴリ">
+              <Link href="/knowhow" aria-current={!cat ? "true" : undefined}>
+                すべて
+                <em>{articles.length}</em>
+              </Link>
+              {KNOWHOW_CATEGORIES.map((c) => (
+                <Link
+                  key={c}
+                  href={`/knowhow?cat=${encodeURIComponent(c)}`}
+                  aria-current={cat === c ? "true" : undefined}
+                >
+                  {c}
+                  <em>{articles.filter((a) => a.category === c).length}</em>
+                </Link>
+              ))}
+            </nav>
+          </div>
+
           <div>
-            <p className="lab-label">CATEGORY</p>
-            <h2>読みたいところから。</h2>
+            {indexed.length === 0 ? (
+              <p className="lab-empty">このカテゴリの記事はまだありません。</p>
+            ) : (
+              <Reveal>
+                {indexed.map((article, i) => (
+                  <ArticleIndexRow
+                    key={article.slug}
+                    article={article}
+                    number={i + 1}
+                  />
+                ))}
+              </Reveal>
+            )}
           </div>
         </div>
-        <div className="lab-tabs">
-          <Link href="/knowhow" aria-current={!cat ? "true" : undefined}>
-            すべて
-          </Link>
-          {KNOWHOW_CATEGORIES.map((c) => (
-            <Link
-              key={c}
-              href={`/knowhow?cat=${encodeURIComponent(c)}`}
-              aria-current={cat === c ? "true" : undefined}
-            >
-              {c}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ---- INDEX：雑誌の目次 ---- */}
-      <section className="lab-section lab-ruled" style={{ paddingTop: 40 }}>
-        <div className="lab-section-head">
-          <div className="lab-result-count">
-            <strong>{String(list.length).padStart(2, "0")}</strong>
-            <span>{cat ? "ARTICLES IN CATEGORY" : "ARTICLES"}</span>
-          </div>
-          {cat && (
-            <Link href="/knowhow">
-              すべての記事
-              <ArrowUpRight width={18} height={18} aria-hidden="true" />
-            </Link>
-          )}
-        </div>
-
-        {indexed.length === 0 ? (
-          <p className="lab-empty">このカテゴリの記事はまだありません。</p>
-        ) : (
-          <Reveal>
-            {indexed.map((article, i) => (
-              <ArticleIndexRow
-                key={article.slug}
-                article={article}
-                number={i + 1}
-              />
-            ))}
-          </Reveal>
-        )}
       </section>
 
       {/* ---- PICK UP：dark 面に戻してリズムを作る ---- */}

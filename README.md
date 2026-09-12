@@ -78,6 +78,7 @@ npm run verify:a11y         # alt / h1 / キーボード / focus-visible / ド�
 npm run verify:nojs         # JS無効時にコンテンツが消えないこと
 npm run verify:overlap      # アウトライン文字が本文に掛からないこと
 npm run verify:ornament     # 装飾要素がレイアウトを占有していないこと（下記）
+npm run verify:index        # /knowhow の目次が幅ごとに正しい形になること
 npm run shots               # 全景スクリーンショットを .screenshots/ に出力
 ```
 

@@ -1979,11 +1979,11 @@ a.lab-stagger-item:hover .lab-stagger-media img {
 /* 目次行。番号 + タイトル + カテゴリの三分割。 */
 .lab-index-row {
   display: grid;
-  grid-template-columns: 68px 1fr auto;
-  gap: clamp(16px, 2.4vw, 36px);
-  align-items: baseline;
+  grid-template-columns: clamp(52px, 5vw, 76px) minmax(0, 1fr);
+  gap: clamp(14px, 1.6vw, 26px);
+  align-items: start;
   border-top: 1px solid var(--lab-line);
-  padding: clamp(20px, 2.4vw, 30px) 0;
+  padding: clamp(22px, 2.4vw, 32px) 0;
   transition: padding-left 0.25s;
 }
 
@@ -1995,12 +1995,23 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   padding-left: 12px;
 }
 
+/* 通し番号はアウトラインの大きな数字にして、行の起点を立てる */
 .lab-index-row > b {
   font-family: var(--font-label);
-  font-size: 0.875rem;
-  letter-spacing: 0.08em;
+  font-size: clamp(30px, 3vw, 46px);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  color: transparent;
+  -webkit-text-stroke: 1px #1c3b7140;
+  transition:
+    -webkit-text-stroke-color 0.25s,
+    color 0.25s;
+}
+
+.lab-index-row:hover > b {
   color: var(--lab-blue);
-  font-weight: 700;
+  -webkit-text-stroke-color: transparent;
 }
 
 .lab-index-row h3 {
@@ -2018,15 +2029,30 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   margin-top: 8px;
 }
 
-.lab-index-row > span {
+/* メタは右端に飛ばさず、見出しの上に小さく置く。
+   行の途中に大きな空白ができるのを防ぐ。 */
+.lab-index-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
   font-family: var(--font-label);
   font-size: 0.6875rem;
   letter-spacing: 0.14em;
   color: var(--lab-muted-2);
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.lab-index-meta .lab-index-cat {
+  color: var(--lab-blue);
+  font-weight: 700;
+}
+
+.lab-index-row .lab-index-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 /* カテゴリのタブ列 */
@@ -2064,11 +2090,11 @@ a.lab-stagger-item:hover .lab-stagger-media img {
 
 @media (max-width: 760px) {
   .lab-index-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
   }
-  .lab-index-row > span {
-    order: -1;
+  .lab-index-row > b {
+    font-size: 24px;
   }
   .lab-index-row:hover {
     padding-left: 0;
@@ -2275,7 +2301,7 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   transform: translate(3px, -3px);
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
   .lab-pickup {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2296,6 +2322,108 @@ a.lab-stagger-item:hover .lab-stagger-media img {
     flex: 0 0 82%;
     scroll-snap-align: start;
     min-height: 220px;
+  }
+}
+
+/* --- INDEX：左に見出しとカテゴリ、右に記事行。雑誌の目次の構え --- */
+
+.lab-index-layout {
+  display: grid;
+  grid-template-columns: minmax(0, clamp(200px, 20vw, 280px)) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 80px);
+  align-items: start;
+}
+
+/* 行を読み進める間、左の見出しとカテゴリは留まる */
+.lab-index-aside {
+  position: sticky;
+  top: calc(var(--lab-header) + 20px);
+}
+
+.lab-index-aside .lab-result-count {
+  margin-top: 14px;
+}
+
+/* カテゴリ。デスクトップは縦のリスト、狭い画面ではチップ列になる */
+.lab-index-nav {
+  display: grid;
+  margin-top: 28px;
+}
+
+.lab-index-nav a {
+  border-top: 1px solid var(--lab-line);
+  padding: 13px 0;
+  font-size: 0.9375rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition:
+    padding-left 0.2s,
+    color 0.2s;
+}
+
+.lab-index-nav a:last-child {
+  border-bottom: 1px solid var(--lab-line);
+}
+
+.lab-index-nav a:hover {
+  padding-left: 8px;
+  color: var(--lab-blue);
+}
+
+.lab-index-nav a[aria-current="true"] {
+  color: var(--lab-blue);
+  font-weight: 700;
+}
+
+.lab-index-nav a[aria-current="true"]::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: var(--lab-lime);
+  flex-shrink: 0;
+}
+
+.lab-index-nav em {
+  font-style: normal;
+  font-family: var(--font-label);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--lab-muted-2);
+}
+
+@media (max-width: 900px) {
+  .lab-index-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .lab-index-aside {
+    position: static;
+  }
+  /* 狭い画面ではチップ列に切り替える（DOM は同じもの） */
+  .lab-index-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .lab-index-nav a {
+    border: 1px solid var(--lab-line);
+    padding: 10px 15px;
+    font-size: 0.875rem;
+  }
+  .lab-index-nav a:hover {
+    padding-left: 15px;
+  }
+  .lab-index-nav a[aria-current="true"] {
+    background: var(--lab-ink);
+    border-color: var(--lab-ink);
+    color: #fff;
+  }
+  .lab-index-nav a[aria-current="true"]::after,
+  .lab-index-nav em {
+    display: none;
   }
 }
 
