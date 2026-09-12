@@ -84,7 +84,13 @@ export type Company = {
   personTitle: string;
   /** ポートレート画像 */
   photo: string;
-  /** 画像の object-position（顔の位置に合わせる） */
+  /**
+   * 画像の object-position。顔が全コンテナで枠内に収まる値。
+   * カード(0.73) / StoryCard(0.8) / 顔スタック(0.84) / Stagger(1.33) /
+   * 詳細帯(5:3) のどれで切り抜かれても頭頂とアゴが切れないよう、
+   * 実測した頭部の位置から許容範囲を解いて決めている。
+   * 画像を差し替えたら scripts/focus-check.mjs で再検証すること。
+   */
   focus: string;
   /** 記事タイトル */
   title: string;
@@ -133,7 +139,7 @@ export const companies: Company[] = [
     personName: "水口啓一",
     personTitle: "代表取締役",
     photo: "/images/yamagata-harness.jpg",
-    focus: "50% 18%",
+    focus: "62% 34.0%",
     title: "見えない場所で、動かしている。",
     excerpt: "製品の内側にしかない部品を、ミリ単位でつくり続ける理由。",
     lead: "完成した製品を開けなければ、その部品は誰の目にも触れない。それでも精度にこだわり続ける現場を訪ねた。",
@@ -154,7 +160,7 @@ export const companies: Company[] = [
     personName: "佐藤元章",
     personTitle: "代表取締役",
     photo: "/images/shoei-seiki.jpg",
-    focus: "50% 30%",
+    focus: "52% 17.9%",
     title: "精度は、人の手からしか生まれない。",
     excerpt: "機械化が進んでも、最後に残る判断がある。",
     lead: "自動化できる工程は自動化する。そのうえで、人が残るべき場所はどこかを問い続けている。",
@@ -175,7 +181,7 @@ export const companies: Company[] = [
     personName: "永田雄大",
     personTitle: "経営企画室",
     photo: "/images/nagata-reiki.jpg",
-    focus: "50% 42%",
+    focus: "63% 42.0%",
     title: "止められない設備を、支える。",
     excerpt: "冷やし続けることが前提の場所で、何が起きているか。",
     lead: "食品も医療も、温度が止まれば成立しない。その前提を守る仕事の現場を聞いた。",
@@ -196,7 +202,7 @@ export const companies: Company[] = [
     personName: "富岡賢",
     personTitle: "代表取締役社長",
     photo: "/images/chuo-denko.jpg",
-    focus: "50% 28%",
+    focus: "50% 13.1%",
     title: "電気は、地面の下を通っている。",
     excerpt: "普段は意識されないインフラを、つくり直し続ける。",
     lead: "新しくつくる仕事より、使われ続けているものを更新する仕事のほうが多い。",
@@ -217,7 +223,7 @@ export const companies: Company[] = [
     personName: "八田嘉一郎",
     personTitle: "代表取締役",
     photo: "/images/hatta-keiami.jpg",
-    focus: "50% 25%",
+    focus: "43% 19.7%",
     title: "編むことでしか、出せない構造がある。",
     excerpt: "織るのでも縫うのでもない、経編という技術。",
     lead: "伸びる、透ける、破れない。用途ごとに構造から設計する繊維の話。",
@@ -238,7 +244,7 @@ export const companies: Company[] = [
     personName: "佐藤健太郎",
     personTitle: "代表取締役社長",
     photo: "/images/s-pack.jpg",
-    focus: "50% 26%",
+    focus: "52% 17.7%",
     title: "包むことは、届けること。",
     excerpt: "中身より先に手に取られるものを、つくっている。",
     lead: "パッケージは、商品が最初に発する言葉でもある。",
@@ -259,7 +265,7 @@ export const companies: Company[] = [
     personName: "井上博之",
     personTitle: "代表取締役社長",
     photo: "/images/inoue-ribbon.jpg",
-    focus: "50% 24%",
+    focus: "55% 10.5%",
     title: "細いものを、正確に。",
     excerpt: "幅数ミリの世界で、品質をどう定義するか。",
     lead: "リボンという言葉から想像されるものより、ずっと産業に近い現場だった。",
@@ -280,7 +286,7 @@ export const companies: Company[] = [
     personName: "山口徹",
     personTitle: "代表取締役社長",
     photo: "/images/osaka-meiban.jpg",
-    focus: "50% 22%",
+    focus: "52% 32.4%",
     title: "表示は、安全の一部だ。",
     excerpt: "読めなければ意味がない、という前提からつくる。",
     lead: "機械の操作パネルも、非常口の案内も、読み違えられない設計が要る。",
@@ -301,7 +307,7 @@ export const companies: Company[] = [
     personName: "高沢治世子",
     personTitle: "代表取締役社長",
     photo: "/images/maru-taka.jpg",
-    focus: "50% 24%",
+    focus: "50% 8.1%",
     title: "現場は、段取りで決まる。",
     excerpt: "工事が始まる前に、ほとんどが決まっている。",
     lead: "着工してからの判断より、その前に積み上げた準備のほうが長い。",

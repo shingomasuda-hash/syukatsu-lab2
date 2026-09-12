@@ -79,6 +79,7 @@ npm run verify:nojs         # JS無効時にコンテンツが消えないこと
 npm run verify:overlap      # アウトライン文字が本文に掛からないこと
 npm run verify:ornament     # 装飾要素がレイアウトを占有していないこと（下記）
 npm run verify:index        # /knowhow の目次が幅ごとに正しい形になること
+npm run verify:focus        # 人物写真の顔が全コンテナで枠内に収まること（下記）
 npm run shots               # 全景スクリーンショットを .screenshots/ に出力
 ```
 
@@ -94,6 +95,33 @@ npm run shots               # 全景スクリーンショットを .screenshots/
 装飾要素を除外するため、必ず `> :not([aria-hidden="true"])` を使ってください。
 
 同じ事故を2回起こしているので、装飾まわりのCSSを触ったら必ずこのテストを通してください。
+
+### 人物写真の焦点（`focus`）について
+
+`object-fit: cover` は**片方の軸しか切りません**。
+コンテナの比率が画像より横長なら縦が切られ、縦長なら横が切られます。
+
+このサイトは1枚の人物写真を比率の異なる6つのコンテナで使い回しています。
+
+| コンテナ | 比率 |
+|---|---|
+| カルーセルカード | 0.73 |
+| StoryCard | 0.80 |
+| Hero顔スタック | 0.84 |
+| Stagger | 1.33 |
+| 詳細figure | 1.67 |
+| PageHero図 | 1.60 |
+
+`src/data/companies.ts` の `focus` は、**この6つすべてで頭頂とアゴが枠内に残る値**を
+実測した頭部の位置から許容範囲を解いて決めています。勘で置いた値ではありません。
+
+`.lab-detail-figure` の比率が `5 / 3` なのも同じ理由です。
+16:7 まで浅くすると、掲載中の9枚のうち5枚で頭部が枠から出ます。
+`max-height` で高さを抑えると `aspect-ratio` が破られて実効比率が横長になり、
+同じ問題が再発するため、高さは `max-width` 側で抑えています。
+
+画像を差し替えたら `scripts/focus-check.mjs` の `HEAD`（頭頂とアゴの位置）を
+測り直したうえで `npm run verify:focus` を通してください。
 
 ## コンテンツ
 

@@ -2823,11 +2823,18 @@ a.lab-stagger-item:hover .lab-stagger-media img {
 }
 
 /* Hero 下端に重ねる写真 */
+/* 16:7 だと縦長のポートレートで頭部が枠に入りきらない。
+   掲載画像すべてで頭頂とアゴが収まる最も浅い比率が 5:3。
+   変更する場合は npm run verify:focus を通すこと。 */
 .lab-detail-figure {
   position: relative;
   z-index: 3;
   margin-top: clamp(36px, 4vw, 56px);
-  aspect-ratio: 16 / 7;
+  aspect-ratio: 5 / 3;
+  /* 高さは max-height ではなく幅で抑える。
+     max-height だと aspect-ratio が破られて実効比率が横長になり、
+     頭部が再び枠から出てしまう。 */
+  max-width: min(100%, 1100px);
   overflow: hidden;
   clip-path: polygon(0 0, 100% 0, 100% 88%, 92% 100%, 0 100%);
 }
