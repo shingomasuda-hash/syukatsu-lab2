@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+const BASE = process.env.BASE ?? 'http://localhost:3000';
 const b = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 let fails = 0;
 const check = (ok, msg, extra='') => { if(!ok) fails++; console.log(`${ok?'PASS':'FAIL'}  ${msg}${extra?'  — '+extra:''}`); };
@@ -8,7 +9,7 @@ const ctx = await b.newContext({ viewport:{width:1440,height:900} });
 // 1. alt / semantic / heading
 for (const route of ['/','/companies','/interviews','/events','/knowhow','/about','/for-companies','/companies/yamagata-harness']) {
   const p = await ctx.newPage();
-  await p.goto('http://localhost:3200'+route, { waitUntil:'networkidle' });
+  await p.goto(BASE+route, { waitUntil:'networkidle' });
   const r = await p.evaluate(() => {
     const imgs = [...document.querySelectorAll('img')];
     const noAlt = imgs.filter(i => i.getAttribute('alt') === null).length;
@@ -27,7 +28,7 @@ for (const route of ['/','/companies','/interviews','/events','/knowhow','/about
 // 2. キーボード操作：Tab でヘッダーナビに到達し、focus-visible の輪郭が出るか
 {
   const p = await ctx.newPage();
-  await p.goto('http://localhost:3200/', { waitUntil:'networkidle' });
+  await p.goto(BASE+'/', { waitUntil:'networkidle' });
   await p.keyboard.press('Tab');
   const f1 = await p.evaluate(() => {
     const el = document.activeElement;
@@ -52,7 +53,7 @@ for (const route of ['/','/companies','/interviews','/events','/knowhow','/about
 {
   const ctx2 = await b.newContext({ viewport:{width:390,height:844}, isMobile:true, hasTouch:true });
   const p = await ctx2.newPage();
-  await p.goto('http://localhost:3200/', { waitUntil:'networkidle' });
+  await p.goto(BASE+'/', { waitUntil:'networkidle' });
   const burger = p.locator('.lab-burger');
   check(await burger.getAttribute('aria-expanded') === 'false', 'ハンバーガー初期 aria-expanded=false');
   await burger.click();
@@ -70,7 +71,7 @@ for (const route of ['/','/companies','/interviews','/events','/knowhow','/about
 // 4. カルーセルのリンクがキーボードで辿れる
 {
   const p = await ctx.newPage();
-  await p.goto('http://localhost:3200/', { waitUntil:'networkidle' });
+  await p.goto(BASE+'/', { waitUntil:'networkidle' });
   const faces = await p.locator('.lab-orbit-face').count();
   const focusable = await p.evaluate(() =>
     [...document.querySelectorAll('.lab-orbit-face')].filter(a => a.tagName === 'A' && a.href).length);

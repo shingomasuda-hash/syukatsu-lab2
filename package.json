@@ -12,7 +12,8 @@
     "verify:a11y": "node scripts/a11y-test.mjs",
     "verify:nojs": "node scripts/nojs-test.mjs",
     "verify:overlap": "node scripts/overlap-test.mjs",
-    "shots": "node scripts/shots-full.mjs"
+    "shots": "node scripts/shots-full.mjs",
+    "verify:ornament": "node scripts/ornament-test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.544.0",

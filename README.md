@@ -71,16 +71,28 @@ DARK（ネイビー/ブルー/ライム）と LIGHT（白/`#f7f9fc`/ネイビー
 Playwright を使ったブラウザ検証を用意しています（dev server を起動した状態で実行）。
 
 ```bash
-npm run dev                 # 別ターミナルで :3000 を起動、BASE で上書き可
-BASE=http://localhost:3000 npm run verify   # 全ルート × Desktop/Mobile：ステータス・console error・横スクロール
+npm run dev                 # 別ターミナルで :3000 を起動
+npm run verify              # 全ルート × Desktop/Mobile：ステータス・console error・横スクロール
 npm run verify:carousel     # 3Dカルーセルの挙動15項目
 npm run verify:a11y         # alt / h1 / キーボード / focus-visible / ドロワー
 npm run verify:nojs         # JS無効時にコンテンツが消えないこと
 npm run verify:overlap      # アウトライン文字が本文に掛からないこと
+npm run verify:ornament     # 装飾要素がレイアウトを占有していないこと（下記）
 npm run shots               # 全景スクリーンショットを .screenshots/ に出力
 ```
 
-`CHROME_PATH` でブラウザバイナリを指定できます。
+`BASE`（既定 `http://localhost:3000`）と `CHROME_PATH` で上書きできます。
+
+### `verify:ornament` について
+
+`.lab-orbit` は `aspect-ratio: 1` と `width: 110%` を持つため、
+`position: absolute` が外れると **2,000px 以上の空白としてレイアウトを占有します。**
+
+これは `.lab-detail-hero > *` や `.lab-feature-stage > *` のような
+直接子セレクタで `position: relative` を当てると起きます。
+装飾要素を除外するため、必ず `> :not([aria-hidden="true"])` を使ってください。
+
+同じ事故を2回起こしているので、装飾まわりのCSSを触ったら必ずこのテストを通してください。
 
 ## コンテンツ
 

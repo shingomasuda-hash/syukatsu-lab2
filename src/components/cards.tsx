@@ -75,52 +75,47 @@ export function LeadCompanyCard({ company }: { company: Company }) {
   );
 }
 
-/** 左右交互にずらす横並びカード */
+/** 左右交互にずらす横並びカード。空いた側に大きな通し番号を置く。 */
 export function StaggerCompanyCard({
   company,
+  number,
   priority = false,
 }: {
   company: Company;
+  /** 行の通し番号。空いた側にアウトライン数字として出す。 */
+  number: number;
   /** 一覧の先頭カードだけ true。LCP 画像になるため。 */
   priority?: boolean;
 }) {
   return (
-    <Link
-      href={`/companies/${company.slug}`}
-      className="lab-stagger-item"
-      style={{ display: "grid", gridTemplateColumns: "inherit", gap: "inherit" }}
-    >
+    <Link href={`/companies/${company.slug}`} className="lab-stagger-item">
       <div className="lab-stagger-media">
         <Image
           src={company.photo}
           alt={`${company.personTitle} ${company.personName}氏`}
           fill
-          sizes="(max-width: 760px) 100vw, 45vw"
+          sizes="(max-width: 760px) 100vw, 520px"
           className="object-cover"
           style={{ objectPosition: company.focus }}
           priority={priority}
         />
       </div>
-      <div>
-        <p className="lab-meta" style={{ marginTop: 0 }}>
+      <div className="lab-stagger-body">
+        <p className="lab-meta">
           {company.location} ／ {company.industry}
         </p>
-        <h3
-          style={{
-            fontSize: "clamp(20px, 2vw, 30px)",
-            fontWeight: 700,
-            letterSpacing: "-0.03em",
-            lineHeight: 1.55,
-            marginTop: 12,
-          }}
-        >
-          {company.title}
-        </h3>
-        <p className="lab-company">{company.excerpt}</p>
-        <p className="lab-company" style={{ marginTop: 16 }}>
-          {company.name}／{company.personTitle} {company.personName}
+        <h3>{company.title}</h3>
+        <p className="lab-stagger-excerpt">{company.excerpt}</p>
+        <p className="lab-stagger-by">
+          {company.name}
+          <span>
+            {company.personTitle} {company.personName}
+          </span>
         </p>
       </div>
+      <span className="lab-stagger-no" aria-hidden="true">
+        {String(number).padStart(2, "0")}
+      </span>
     </Link>
   );
 }
@@ -141,8 +136,36 @@ export function ArticleIndexRow({
         <p>{article.excerpt}</p>
       </div>
       <span>
-        {article.category} · {formatDate(article.publishedAt)}
+        {article.category} · {formatDate(article.publishedAt)} ·{" "}
+        {article.readingTime}MIN
+        <i className="lab-index-arrow">
+          <ArrowUpRight width={16} height={16} aria-hidden="true" />
+        </i>
       </span>
+    </Link>
+  );
+}
+
+/** PICK UP 帯に置く dark 面のカード */
+export function PickupCard({
+  article,
+  mark,
+}: {
+  article: Article;
+  /** カード左上の英字マーク */
+  mark: string;
+}) {
+  return (
+    <Link href={`/knowhow/${article.slug}`}>
+      <div>
+        <b>{mark}</b>
+        <h3>{article.title}</h3>
+        <p>{article.excerpt}</p>
+      </div>
+      <div className="lab-pickup-foot">
+        <span>{article.category}</span>
+        <ArrowUpRight width={16} height={16} aria-hidden="true" />
+      </div>
     </Link>
   );
 }

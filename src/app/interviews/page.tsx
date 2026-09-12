@@ -58,6 +58,7 @@ export default function InterviewsPage() {
             <StaggerCompanyCard
               key={company.slug}
               company={company}
+              number={i + 1}
               priority={i === 0}
             />
           ))}

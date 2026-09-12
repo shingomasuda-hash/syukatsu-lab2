@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+const BASE = process.env.BASE ?? 'http://localhost:3000';
 const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 const routes = ['/companies','/interviews','/events','/knowhow','/about','/for-companies'];
 let fails = 0;
@@ -6,7 +7,7 @@ for (const vp of [{n:'desktop',w:1440,h:900},{n:'mobile',w:390,h:844}]) {
   const ctx = await browser.newContext({ viewport:{width:vp.w,height:vp.h}, isMobile: vp.n==='mobile', hasTouch: vp.n==='mobile' });
   for (const route of routes) {
     const page = await ctx.newPage();
-    await page.goto('http://localhost:3200'+route, { waitUntil:'networkidle' });
+    await page.goto(BASE+route, { waitUntil:'networkidle' });
     await page.waitForTimeout(500);
     // アウトライン文字と、本文/見出し/指標行の矩形が重なっていないか
     const r = await page.evaluate(() => {

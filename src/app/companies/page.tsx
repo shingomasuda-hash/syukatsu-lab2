@@ -48,7 +48,10 @@ export default async function CompaniesPage({
     (c) => (!cat || c.industry === cat) && (!pref || c.region === pref),
   );
 
+  // 大1 + 小2 を Editorial ブロックに、残りは4列グリッドへ送る
   const [lead, ...rest] = results;
+  const beside = rest.slice(0, 2);
+  const remainder = rest.slice(2);
   const filtered = Boolean(cat || pref);
 
   return (
@@ -165,18 +168,32 @@ export default async function CompaniesPage({
             この条件に当てはまる企業はまだありません。条件を外すか、別の地域から探してみてください。
           </p>
         ) : (
-          <Reveal className="lab-editorial">
-            <LeadCompanyCard company={lead} />
-            <div className="lab-editorial-rest">
-              {rest.map((company) => (
-                <StoryCard
-                  key={company.slug}
-                  company={company}
-                  sizes="(max-width: 760px) 100vw, 22vw"
-                />
-              ))}
-            </div>
-          </Reveal>
+          <>
+            <Reveal className="lab-editorial">
+              <LeadCompanyCard company={lead} />
+              <div className="lab-editorial-rest">
+                {beside.map((company) => (
+                  <StoryCard
+                    key={company.slug}
+                    company={company}
+                    sizes="(max-width: 760px) 100vw, 320px"
+                  />
+                ))}
+              </div>
+            </Reveal>
+
+            {remainder.length > 0 && (
+              <Reveal className="lab-grid-4" as="div">
+                {remainder.map((company) => (
+                  <StoryCard
+                    key={company.slug}
+                    company={company}
+                    sizes="(max-width: 760px) 100vw, 380px"
+                  />
+                ))}
+              </Reveal>
+            )}
+          </>
         )}
       </section>
 

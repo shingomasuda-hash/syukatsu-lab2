@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+const BASE = process.env.BASE ?? 'http://localhost:3000';
 const SP = process.env.SP ?? '.screenshots';
 const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 const targets = [['/events','events'],['/about','about'],['/for-companies','for-companies'],['/companies','companies'],['/knowhow','knowhow'],['/interviews','interviews'],['/companies/yamagata-harness','company-detail']];
@@ -6,7 +7,7 @@ for (const vp of [{n:'desktop',w:1440,h:1000},{n:'mobile',w:390,h:844}]) {
   const ctx = await browser.newContext({ viewport:{width:vp.w,height:vp.h}, isMobile: vp.n==='mobile', hasTouch: vp.n==='mobile' });
   for (const [route,name] of targets) {
     const page = await ctx.newPage();
-    await page.goto('http://localhost:3100'+route, { waitUntil:'networkidle' });
+    await page.goto(BASE+route, { waitUntil:'networkidle' });
     // hydration 完了（observer 設置）を待つ。data-js は hydration 前に付くので目印にならない。
     await page.waitForTimeout(1500);
     // scroll reveal を全部発火させる

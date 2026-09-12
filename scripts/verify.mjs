@@ -20,7 +20,7 @@ const VIEWPORTS = [
   { name: 'mobile', width: 390, height: 844 },
 ];
 
-const base = process.env.BASE ?? 'http://localhost:3100';
+const base = process.env.BASE ?? 'http://localhost:3000';
 const OUT = process.env.SP ?? '.screenshots';
 const browser = await chromium.launch(process.env.CHROME_PATH ? { executablePath: process.env.CHROME_PATH } : {});
 let problems = 0;

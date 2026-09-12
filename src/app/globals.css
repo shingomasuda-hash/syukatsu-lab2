@@ -63,6 +63,24 @@
   --lab-gutter: 5vw;
   --lab-gutter-sp: 6vw;
   --lab-header: 85px;
+  /* 下層ページのコンテンツ最大幅。これ以上広い画面では左右に余白を逃がす。 */
+  --lab-max: 1600px;
+}
+
+/* 下層ページのセクションだけ、広い画面で伸び続けないよう gutter を上書きする。
+   1600px 以下では 5vw のままなので、それ以下の見えかたは変わらない。
+   トップページ（.lab-home 配下）は対象外。 */
+.lab-page-hero,
+.lab-detail-hero,
+.lab-article,
+.lab-cta,
+.lab-finder-panel,
+.lab-surface-light,
+.lab-surface-paper,
+.lab-surface-dark,
+.lab-surface-navy,
+.lab-ruled {
+  --lab-gutter: max(5vw, calc((100% - var(--lab-max)) / 2));
 }
 
 @layer base {
@@ -1489,8 +1507,12 @@
   margin-top: 16px;
 }
 
+/* 大1 の隣に小2 を並べる。デスクトップでカラム指定が無いと
+   カードが1列に縦積みになり、一覧が極端に間延びする。 */
 .lab-editorial-rest {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
   gap: 28px;
 }
 
@@ -1500,33 +1522,49 @@
   gap: clamp(36px, 5vw, 72px);
 }
 
+/* 行そのものを 1100px で止め、左右交互に寄せて非対称をつくる。
+   写真が画面幅に比例して巨大化しないよう、メディア列は 520px で固定する。 */
 .lab-stagger > * {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
+  grid-template-columns: minmax(0, 500px) minmax(0, 430px) minmax(0, 1fr);
   gap: clamp(24px, 3vw, 56px);
   align-items: center;
 }
 
+/* 偶数行は写真と番号を入れ替えて、視線をジグザグに振る */
 .lab-stagger > *:nth-child(even) {
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 430px) minmax(0, 500px);
 }
 
-.lab-stagger > *:nth-child(even) > .lab-stagger-media {
+.lab-stagger > *:nth-child(even) .lab-stagger-no {
+  order: 1;
+  text-align: left;
+}
+
+.lab-stagger > *:nth-child(even) .lab-stagger-body {
   order: 2;
 }
 
-/* 偶数行は少し下げて、行が揃わないようにする */
-.lab-stagger > *:nth-child(even) {
-  margin-left: clamp(0px, 4vw, 72px);
+.lab-stagger > *:nth-child(even) .lab-stagger-media {
+  order: 3;
 }
 
-.lab-stagger > *:nth-child(odd) {
-  margin-right: clamp(0px, 4vw, 72px);
+/* 空いた側を埋める大きな通し番号 */
+.lab-stagger-no {
+  font-family: var(--font-label);
+  font-size: clamp(64px, 6.5vw, 128px);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px #1c3b7130;
+  text-align: right;
 }
 
 .lab-stagger-media {
   position: relative;
   aspect-ratio: 4 / 3;
+  max-height: 400px;
   overflow: hidden;
   background: #eef0f3;
   clip-path: polygon(0 0, 100% 0, 100% 86%, 88% 100%, 0 100%);
@@ -1537,10 +1575,45 @@
   filter: saturate(0.72);
 }
 
-.lab-stagger a:hover .lab-stagger-media img,
 a.lab-stagger-item:hover .lab-stagger-media img {
   transform: scale(1.03);
   filter: saturate(1);
+}
+
+.lab-stagger-item h3 {
+  font-size: clamp(20px, 1.8vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.55;
+  margin-top: 12px;
+  /* 末尾に1〜2文字だけ残る折り返しを避ける */
+  text-wrap: balance;
+}
+
+.lab-stagger-excerpt {
+  color: var(--lab-muted-2);
+  margin-top: 14px;
+  font-size: 0.9375rem;
+  line-height: 1.85;
+}
+
+/* 誰の話かを、社名より人名が立つ形で出す */
+.lab-stagger-by {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--lab-line);
+  font-size: 0.8125rem;
+  color: var(--lab-muted-2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+
+.lab-stagger-by span {
+  color: var(--lab-ink);
+  font-weight: 700;
+  font-size: 0.9375rem;
 }
 
 /* 汎用カードグリッド（3列を避け、2列 or 4列で使う） */
@@ -1556,7 +1629,33 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   gap: 24px;
 }
 
+/* Editorial ブロックの直後に続くグリッドは、区切りの罫線を挟む */
+.lab-editorial + .lab-grid-4 {
+  border-top: 1px solid var(--lab-line);
+  margin-top: clamp(36px, 4vw, 64px);
+  padding-top: clamp(36px, 4vw, 64px);
+}
+
 @media (max-width: 1100px) {
+  .lab-stagger-no {
+    display: none;
+  }
+  .lab-stagger > *,
+  .lab-stagger > *:nth-child(even) {
+    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  }
+  .lab-stagger > *:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+  }
+  .lab-stagger > *:nth-child(even) .lab-stagger-body {
+    order: 1;
+  }
+  .lab-stagger > *:nth-child(even) .lab-stagger-media {
+    order: 2;
+  }
+  .lab-stagger-media {
+    max-height: 300px;
+  }
   .lab-editorial {
     grid-template-columns: 1fr;
     gap: 36px;
@@ -1585,8 +1684,16 @@ a.lab-stagger-item:hover .lab-stagger-media img {
     gap: 16px;
     margin: 0;
   }
-  .lab-stagger > *:nth-child(even) > .lab-stagger-media {
+  .lab-stagger > *:nth-child(even) .lab-stagger-media,
+  .lab-stagger > *:nth-child(even) .lab-stagger-body {
     order: 0;
+  }
+  .lab-stagger-media {
+    max-height: 260px;
+  }
+  .lab-stagger-by {
+    margin-top: 18px;
+    padding-top: 14px;
   }
 }
 
@@ -1901,6 +2008,7 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.6;
+  text-wrap: balance;
 }
 
 .lab-index-row p {
@@ -1916,6 +2024,9 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   letter-spacing: 0.14em;
   color: var(--lab-muted-2);
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
 }
 
 /* カテゴリのタブ列 */
@@ -1961,6 +2072,282 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   }
   .lab-index-row:hover {
     padding-left: 0;
+  }
+}
+
+/* --- 没入型 FEATURED（dark 面・奥行きを持たせる） --- */
+
+.lab-feature-stage {
+  isolation: isolate;
+  background: var(--lab-dark);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  padding: clamp(52px, 6vw, 96px) var(--lab-gutter) clamp(56px, 6vw, 100px);
+}
+
+/* 右側の斜めブルー面。
+   Hero の面と隣接して段差に見えないよう、セクションの少し下から始める。 */
+.lab-feature-stage::before {
+  content: "";
+  z-index: 0;
+  background: var(--lab-blue-solid);
+  width: 36%;
+  height: 140%;
+  position: absolute;
+  top: 18%;
+  right: -12%;
+  transform: skew(-15deg);
+}
+
+/* 装飾（.lab-hero-grid / .lab-orbit）の position:absolute を打ち消さないこと。
+   打ち消すと aspect-ratio を持つ軌道が実レイアウトを占有してセクションが伸びる。
+   .lab-detail-hero と同じ理由で :not([aria-hidden]) で除外している。 */
+.lab-feature-stage > :not([aria-hidden="true"]) {
+  position: relative;
+  z-index: 3;
+}
+
+.lab-feature-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: clamp(32px, 4vw, 72px);
+  align-items: end;
+}
+
+.lab-feature-stage .lab-label {
+  color: var(--lab-lime);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 0.16em;
+}
+
+.lab-feature-stage h2 {
+  font-size: clamp(30px, 3.8vw, 60px);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1.34;
+  margin: 22px 0 20px;
+  max-width: 13em;
+  /* 1行に1文字だけ残るような折り返しを避ける */
+  text-wrap: balance;
+}
+
+.lab-feature-stage h2 a:hover {
+  color: var(--lab-lime);
+}
+
+.lab-feature-stage .lab-feature-lead {
+  color: var(--lab-muted);
+  font-size: 1rem;
+  line-height: 1.9;
+  max-width: 34em;
+}
+
+/* 右側：巨大なアウトライン数字と読了目安 */
+.lab-feature-side {
+  text-align: right;
+}
+
+.lab-feature-side b {
+  display: block;
+  font-family: var(--font-label);
+  font-size: clamp(96px, 11vw, 200px);
+  font-weight: 900;
+  letter-spacing: -0.07em;
+  line-height: 0.82;
+  color: transparent;
+  -webkit-text-stroke: 1px #b9f55e55;
+}
+
+.lab-feature-facts {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin-top: 22px;
+  font-family: var(--font-label);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  color: #9fb0cb;
+}
+
+@media (max-width: 1100px) {
+  .lab-feature-inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .lab-feature-side {
+    text-align: left;
+  }
+  .lab-feature-facts {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .lab-feature-stage {
+    padding: 40px var(--lab-gutter-sp) 44px;
+  }
+  .lab-feature-stage::before {
+    width: 130%;
+    right: -50%;
+  }
+  .lab-feature-side b {
+    font-size: 30vw;
+  }
+}
+
+/* --- PICK UP（dark 面のカード帯） --- */
+
+.lab-pickup {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.lab-pickup > a {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  min-height: 260px;
+  padding: 26px 24px 22px;
+  background: #101e35;
+  border: 1px solid #88a8e955;
+  /* 角丸ではなく角を斜めに落とす */
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    transform 0.25s;
+}
+
+.lab-pickup > a:hover {
+  border-color: var(--lab-lime);
+  background: #14243f;
+  transform: translateY(-4px);
+}
+
+.lab-pickup b {
+  font-family: var(--font-label);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  color: var(--lab-lime);
+  font-weight: 700;
+}
+
+.lab-pickup h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.65;
+  margin-top: 14px;
+}
+
+.lab-pickup p {
+  color: #c2cee2;
+  font-size: 0.875rem;
+  line-height: 1.8;
+  margin-top: 12px;
+}
+
+.lab-pickup-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #ffffff24;
+  padding-top: 16px;
+  font-family: var(--font-label);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: #8fa3c2;
+}
+
+.lab-pickup svg {
+  color: var(--lab-lime);
+  transition: transform 0.25s;
+}
+
+.lab-pickup > a:hover svg {
+  transform: translate(3px, -3px);
+}
+
+@media (max-width: 1100px) {
+  .lab-pickup {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  /* SP は横スクロール + snap で情報量を減らす */
+  .lab-pickup {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 16px;
+    margin-inline: calc(var(--lab-gutter-sp) * -1);
+    padding-inline: var(--lab-gutter-sp);
+  }
+  .lab-pickup > a {
+    flex: 0 0 82%;
+    scroll-snap-align: start;
+    min-height: 220px;
+  }
+}
+
+/* --- 目次行の強化：ホバーで数字と罫線が反応する --- */
+
+.lab-index-row {
+  position: relative;
+}
+
+.lab-index-row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 0;
+  background: var(--lab-blue);
+  transition: width 0.35s ease-out;
+}
+
+.lab-index-row:hover::after {
+  width: 100%;
+}
+
+.lab-index-row > b {
+  transition: color 0.25s;
+}
+
+.lab-index-row:hover > b {
+  color: var(--lab-ink);
+}
+
+/* 行末の矢印 */
+.lab-index-arrow {
+  display: inline-flex;
+  align-items: center;
+  color: var(--lab-blue);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    opacity 0.25s,
+    transform 0.25s;
+}
+
+.lab-index-row:hover .lab-index-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+@media (max-width: 760px) {
+  .lab-index-arrow {
+    display: none;
   }
 }
 
