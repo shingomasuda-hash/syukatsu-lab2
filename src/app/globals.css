@@ -2855,7 +2855,9 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   margin: 0 auto;
 }
 
-.lab-prose > p {
+/* 本文の段落。<section> で章立てするため直接の子とは限らない。
+   `>` にすると章の中の段落に一切当たらず、行間も段落間も既定値のままになる。 */
+.lab-prose p:not(.lab-pullquote) {
   font-size: 1.0625rem;
   line-height: 2.05;
   color: #2b3242;
@@ -2883,8 +2885,19 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   background: var(--lab-lime);
 }
 
-.lab-prose h2:first-child {
+/* 上マージンを消すのは「本文の一番最初の見出し」だけ。
+   `.lab-prose h2:first-child` は各 <section> の先頭 h2 すべてに当たり、
+   章間の見出し前の間隔が消えてしまう。 */
+.lab-prose > h2:first-child,
+.lab-prose > :first-child h2:first-child {
   margin-top: 0;
+}
+
+/* 末尾の余白は「本文全体の最後」だけ詰める。
+   :last-child だけだと章ごとの最終段落に当たり、次の見出しとの間隔が不揃いになる。 */
+.lab-prose > :last-child p:not(.lab-pullquote):last-child,
+.lab-prose > p:not(.lab-pullquote):last-child {
+  margin-bottom: 0;
 }
 
 .lab-pullquote {
@@ -2980,7 +2993,7 @@ a.lab-stagger-item:hover .lab-stagger-media img {
   .lab-article {
     padding: 40px var(--lab-gutter-sp);
   }
-  .lab-prose > p,
+  .lab-prose p:not(.lab-pullquote),
   .lab-prose li {
     font-size: 1rem;
     line-height: 1.95;

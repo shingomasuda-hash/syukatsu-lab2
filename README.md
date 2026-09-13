@@ -80,6 +80,7 @@ npm run verify:overlap      # アウトライン文字が本文に掛からな�
 npm run verify:ornament     # 装飾要素がレイアウトを占有していないこと（下記）
 npm run verify:index        # /knowhow の目次が幅ごとに正しい形になること
 npm run verify:focus        # 人物写真の顔が全コンテナで枠内に収まること（下記）
+npm run verify:type         # 本文に意図したスタイルが実際に当たっていること（下記）
 npm run shots               # 全景スクリーンショットを .screenshots/ に出力
 ```
 
@@ -95,6 +96,21 @@ npm run shots               # 全景スクリーンショットを .screenshots/
 装飾要素を除外するため、必ず `> :not([aria-hidden="true"])` を使ってください。
 
 同じ事故を2回起こしているので、装飾まわりのCSSを触ったら必ずこのテストを通してください。
+
+### セレクタと DOM の噛み合わせに注意
+
+CSS を書いても、セレクタが DOM と噛み合っていなければ**黙って既定値のまま**になります。
+見た目が壊れるわけではないので気づきにくく、このリポジトリでは実際に3回起きています。
+
+| 書いた指定 | 実際の DOM | 起きたこと |
+|---|---|---|
+| `.lab-prose > p` | `<section><p>` | 本文に一切当たらず 16px / 行間1.5 / 段落間0 のまま |
+| `.lab-prose h2:first-child` | 章ごとに `<section><h2>` | 全見出しの上マージンが消え、章間が詰まる |
+| `.lab-detail-hero > *` | 装飾要素も含む | `position:absolute` が外れ、軌道が2,000px超を占有 |
+
+`npm run verify:type` は主要テキストの**計算済みスタイル**（font-size / 行間 /
+1行の全角文字数 / 見出し前の間隔）を実測して検査します。
+本文まわりの CSS を触ったら通してください。
 
 ### 人物写真の焦点（`focus`）について
 

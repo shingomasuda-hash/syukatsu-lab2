@@ -14,7 +14,8 @@
     "shots": "node scripts/shots-full.mjs",
     "verify:ornament": "node scripts/ornament-test.mjs",
     "verify:index": "node scripts/index-layout-test.mjs",
-    "verify:focus": "node scripts/focus-check.mjs"
+    "verify:focus": "node scripts/focus-check.mjs",
+    "verify:type": "node scripts/typography-check.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.544.0",
